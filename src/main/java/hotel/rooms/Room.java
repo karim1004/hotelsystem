@@ -6,6 +6,8 @@ package hotel.rooms;
 
 import hotel.model.RoomAvailability;
 import java.util.List;
+import hotel.exceptions.InvalidDataException;
+
 
 public class Room {
     private int roomNumber;
@@ -13,7 +15,7 @@ public class Room {
     private List<Amenity> amenities ;
     private RoomAvailability availability;
 
-    public Room(int roomNumber, RoomType roomType, List<Amenity> amenities) {
+    public Room(int roomNumber, RoomType roomType, List<Amenity> amenities) throws InvalidDataException {
         this.roomNumber = roomNumber;
         this.roomType = roomType;
         this.amenities = amenities;
@@ -34,7 +36,10 @@ public class Room {
     public int getRoomNumber() {
         return roomNumber;
     }
-    public void setRoomNumber(int roomNumber) {
+    public void setRoomNumber(int roomNumber) throws InvalidDataException {
+        if (roomNumber <= 0) {
+            throw new InvalidDataException("Room number must be positive.");
+        }
         this.roomNumber = roomNumber;
     }
 
