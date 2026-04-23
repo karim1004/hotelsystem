@@ -7,8 +7,9 @@ package hotel.rooms;
 
 public class RoomType {
     private String roomType;
+    private double price;
 
-    public RoomType(String type) {
+    public RoomType(String type,double price) throws InvalidDataException{
         this.roomType = type;
     }
 
