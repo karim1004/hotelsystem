@@ -9,19 +9,32 @@ public class RoomType {
     private String roomType;
     private double price;
 
-    public RoomType(String type,double price) throws InvalidDataException{
-        this.roomType = type;
+    public RoomType(String roomType,double price) throws InvalidDataException{
+        this.roomType = roomType;
+        this.price=price;
     }
 
-    public String getType() {
+    public String getroomType() {
         return roomType;
     }
-    public void setType(String type) {
+    public void setroomType(String type) throws InvalidDataException {
+        if (roomType == null || roomType.trim().isEmpty()) {
+            throw new InvalidDataException("Room type name cannot be empty."); 
+        }
         this.roomType = type;
+    }
+    public double getprice(){
+        return price;
+            }
+    public  void setprice(double price) throws InvalidDataException {
+        if (price < 0) {
+            throw new InvalidDataException("Room price cannot be negative."); // 
+        }
+        this.price = price;
     }
 
     public String toString() {
-        return roomType;
+        return roomType + " ($" + price + ")";
     }
 }
 
