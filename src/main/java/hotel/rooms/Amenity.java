@@ -11,7 +11,7 @@ public class Amenity {
     private AmenityType type;
     private String description;
 
-    public Amenity(AmenityType type, String description) {
+    public Amenity(AmenityType type, String description) throws InvalidDataException{
         this.type = type;
         this.description = description;
     }
@@ -26,7 +26,10 @@ public class Amenity {
     public String getDescription() {
         return description;
     }
-    public void setDescription(String description) {
+    public void setDescription(String description) throws InvalidDataException{
+        if (description == null || description.trim().isEmpty()) {
+            throw new InvalidDataException("Amenity description cannot be empty.");
+        }
         this.description = description;
     }
 
