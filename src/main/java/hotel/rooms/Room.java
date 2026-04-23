@@ -10,7 +10,7 @@ import java.util.List;
 public class Room {
     private int roomNumber;
     private RoomType roomType ;
-    private List<Amenity> amenities;
+    private List<Amenity> amenities ;
     private RoomAvailability availability;
 
     public Room(int roomNumber, RoomType roomType, List<Amenity> amenities) {
