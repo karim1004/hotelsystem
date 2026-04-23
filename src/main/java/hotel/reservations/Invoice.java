@@ -38,9 +38,10 @@ public class Invoice implements Payable {
     public int getInvoiceId() {
         return invoiceId;
     }
-    public Reservation getReservation() {
-        return reservation;
-    }
+ public int getReservationId() {
+    return reservation.getReservationId();
+}
+    
     public double getAmount() {
         return amount;
     }
