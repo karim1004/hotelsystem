@@ -8,6 +8,8 @@ package hotel.people;
 import hotel.model.Gender;
 import hotel.model.Role;
 import java.time.LocalDate;
+import database.HotelDatabase;
+import enums.Role;
 
 public class Admin extends Staff {
 
@@ -15,25 +17,36 @@ public class Admin extends Staff {
         super(username, password, dob, address, gender, Role.ADMIN, workingHours);
     }
 
-    public void addRoom() {
-        System.out.println("Room added.");
-    }
-    public void updateRoom() {
-        System.out.println("Room updated.");
-    }
-    public void deleteRoom() {
-        System.out.println("Room deleted.");
+  public void addRoom(Room room) {
+        HotelDatabase.rooms.add(room);
     }
 
-    public void addAmenity() {
-        System.out.println("Amenity added.");
+    public void removeRoom(Room room) {
+        HotelDatabase.rooms.remove(room);
     }
-    public void updateAmenity() {
-        System.out.println("Amenity updated.");
+
+    public void updateRoom(Room oldRoom, Room newRoom) {
+        int index = HotelDatabase.rooms.indexOf(oldRoom);
+        if (index != -1)
+            HotelDatabase.rooms.set(index, newRoom);
     }
-    public void deleteAmenity() {
-        System.out.println("Amenity deleted.");
+
+   
+    public void addRoomType(RoomType type) {
+        HotelDatabase.roomTypes.add(type);
     }
-}
+
+    public void removeRoomType(RoomType type) {
+        HotelDatabase.roomTypes.remove(type);
+    }
+
+  
+    public void addAmenity(Amenity a) {
+        HotelDatabase.amenities.add(a);
+    }
+
+    public void removeAmenity(Amenity a) {
+        HotelDatabase.amenities.remove(a);
+    }
 
 
