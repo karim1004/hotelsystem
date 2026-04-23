@@ -5,6 +5,7 @@
 package hotel.people;
 import hotel.model.Gender;
 import java.time.LocalDate;
+import hotel.exceptions.InvalidDataException;
 
 public abstract class Person {
     protected String username;
@@ -35,17 +36,26 @@ public abstract class Person {
 
     public void setUsername(String username) {
         if (username == null || username.trim().isEmpty())
-            throw new IllegalArgumentException("Username cannot be empty");
+            throw new InvalidDataException("Username cannot be empty");
         this.username = username;
     }
 
     public void setPassword(String password) {
         if (password == null || password.length() < 4)
-            throw new IllegalArgumentException("Password must be at least 4 characters");
+            throw new InvalidDataException("Password must be at least 4 characters");
         this.password = password;
     }
 
 
-    public void setDateOfBirth(LocalDate dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
+   public void setDateOfBirth(LocalDate dob) {
+        if (dob == null || dob.isAfter(LocalDate.now()))
+            throw new IllegalArgumentException("Invalid date of birth");
+        this.dateOfBirth = dob;
     }
+    public boolean checkPassword(String password) {
+        return this.password.equals(password);
+    }
+ public String toString() {
+        return "Username: " + username;
+    }
+}
