@@ -57,5 +57,10 @@ public class Invoice implements Payable {
     public void setPaymentMethod(PaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
+    public void resetPayment() {
+    paid = false;
+}
+    
+    
 }
 
