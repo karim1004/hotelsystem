@@ -71,6 +71,11 @@ public Reservation(int reservationId, Guest guest, Room room,
     public void setCheckOutDate(LocalDate checkOutDate) {
         this.checkOutDate = checkOutDate;
     }
+    public void validateRoomExists() {
+    if (room == null) {
+        throw new ROOMNOTAVAILABLEEXCEPTION("Room does not exist for this reservation.");
+    }
+}
 }
 
 
