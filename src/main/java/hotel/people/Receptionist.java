@@ -14,10 +14,13 @@ public class Receptionist extends Staff {
         super(username, password, dob, address, gender, Role.RECEPTIONIST, workingHours);
     }
 
-    public void checkIn() {
-        System.out.println("Guest checked in.");
+       public void checkIn(Reservation r) {
+        System.out.println("Guest checked in: " + r);
     }
-    public void checkOut() {
+
+    public void checkOut(Reservation r) {
+        r.complete();
         System.out.println("Guest checked out.");
     }
+   
 }
