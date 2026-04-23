@@ -4,8 +4,8 @@
  */
 package hotel.rooms;
 
-
 import hotel.model.AmenityType;
+import hotel.exceptions.InvalidDataException;
 
 public class Amenity {
     private AmenityType type;
