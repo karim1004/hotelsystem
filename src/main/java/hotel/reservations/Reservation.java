@@ -4,7 +4,7 @@
  */
 package hotel.reservations;
 
-import hotel.people.Guest;
+import hotel.people.Guest ;
 import hotel.rooms.Room;
 import hotel.model.ReservationStatus;
 import java.time.LocalDate;
