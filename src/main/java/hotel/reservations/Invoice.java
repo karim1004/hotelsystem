@@ -61,6 +61,13 @@ public class Invoice implements Payable {
     paid = false;
 }
     
+    public String getPaymentStatus() {
+    if (paid) {
+        return "PAID";
+    } else {
+        return "UNPAID";
+    }
+}
     
 }
 
