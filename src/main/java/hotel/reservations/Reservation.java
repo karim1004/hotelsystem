@@ -16,17 +16,24 @@ public class Reservation {
     private LocalDate checkInDate;
     private LocalDate checkOutDate;
     private ReservationStatus status;
+public Reservation(int reservationId, Guest guest, Room room,
+                   LocalDate checkInDate, LocalDate checkOutDate) {
 
-
-    public Reservation(int reservationId, Guest guest, Room room, LocalDate checkInDate, LocalDate checkOutDate) {
-        this.reservationId = reservationId;
-        this.guest = guest;
-        this.room = room;
-        this.checkInDate = checkInDate;
-        this.checkOutDate = checkOutDate;
-        this.status = ReservationStatus.CONFIRMED;
+    if (guest == null || room == null || checkInDate == null || checkOutDate == null) {
+        throw new InvalidDataException("Invalid data");
     }
 
+    if (!checkInDate.isBefore(checkOutDate)) {
+        throw new IllegalArgumentException("Check-in must be before check-out");
+    }
+
+    this.reservationId = reservationId;
+    this.guest = guest;
+    this.room = room;
+    this.checkInDate = checkInDate;
+    this.checkOutDate = checkOutDate;
+    this.status = ReservationStatus.CONFIRMED;
+}
     public void cancel() {
         this.status = ReservationStatus.CANCELLED;
         room.free();
