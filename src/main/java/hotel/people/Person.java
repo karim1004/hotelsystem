@@ -49,7 +49,7 @@ public abstract class Person {
 
    public void setDateOfBirth(LocalDate dob) {
         if (dob == null || dob.isAfter(LocalDate.now()))
-            throw new IllegalArgumentException("Invalid date of birth");
+            throw new InvalidDataException("Invalid date of birth");
         this.dateOfBirth = dob;
     }
     public boolean checkPassword(String password) {
