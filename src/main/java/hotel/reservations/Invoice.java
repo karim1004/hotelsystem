@@ -60,12 +60,18 @@ public class Invoice implements Payable {
         return paid;
     }
 
-    public void setAmount(double amount) {
-        this.amount = amount;
+public void setAmount(double amount) {
+    if (amount <= 0) {
+        throw new INVALIDPAYMENTEXCEPTION("Amount must be greater than zero");
     }
-    public void setPaymentMethod(PaymentMethod paymentMethod) {
-        this.paymentMethod = paymentMethod;
+    this.amount = amount;
+}
+ public void setPaymentMethod(PaymentMethod paymentMethod) {
+    if (paymentMethod == null) {
+        throw new InvalidDataException("Payment method cannot be null");
     }
+    this.paymentMethod = paymentMethod;
+}
     public void resetPayment() {
     paid = false;
 }
