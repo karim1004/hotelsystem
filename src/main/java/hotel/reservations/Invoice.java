@@ -15,14 +15,22 @@ public class Invoice implements Payable {
     private boolean paid;
 
 
-    public Invoice(int invoiceId, Reservation reservation, double amount, PaymentMethod paymentMethod) {
-        this.invoiceId = invoiceId;
-        this.reservation = reservation;
-        this.amount = amount;
-        this.paymentMethod = paymentMethod;
-        this.paid = false; // default: not paid yet
+   public Invoice(int invoiceId, Reservation reservation, double amount, PaymentMethod paymentMethod) {
+
+    if (reservation == null || paymentMethod == null) {
+        throw new InvalidDataException("Reservation or payment method is invalid");
     }
 
+    if (amount <= 0) {
+        throw new INVALIDPAYMENTEXCEPTION("Amount must be greater than zero");
+    }
+
+    this.invoiceId = invoiceId;
+    this.reservation = reservation;
+    this.amount = amount;
+    this.paymentMethod = paymentMethod;
+    this.paid = false;
+}
 
     public void processPayment() {
         if (!paid) {
