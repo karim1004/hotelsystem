@@ -34,11 +34,18 @@ public Reservation(int reservationId, Guest guest, Room room,
     this.checkOutDate = checkOutDate;
     this.status = ReservationStatus.CONFIRMED;
 }
-    public void cancel() {
-        this.status = ReservationStatus.CANCELLED;
-        room.free();
-        System.out.println("Reservation " + reservationId + " cancelled.");
+  public void cancel() {
+    if (status == ReservationStatus.CANCELLED) {
+        return;
     }
+
+    if (status == ReservationStatus.COMPLETED) {
+        throw new IllegalStateException("Cannot cancel a completed reservation");
+    }
+
+    status = ReservationStatus.CANCELLED;
+    room.free();
+}
 
     public void complete() {
         this.status = ReservationStatus.COMPLETED;
