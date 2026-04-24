@@ -24,7 +24,7 @@ public Reservation(int reservationId, Guest guest, Room room,
     }
 
     if (!checkInDate.isBefore(checkOutDate)) {
-        throw new IllegalArgumentException("Check-in must be before check-out");
+        throw new InvalidDataException("Check-in must be before check-out");
     }
 
     this.reservationId = reservationId;
