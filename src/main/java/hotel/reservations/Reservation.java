@@ -47,11 +47,18 @@ public Reservation(int reservationId, Guest guest, Room room,
     room.free();
 }
 
-    public void complete() {
-        this.status = ReservationStatus.COMPLETED;
-        room.free();
-        System.out.println("Reservation " + reservationId + " completed.");
+  public void complete() {
+    if (status == ReservationStatus.COMPLETED) {
+        return;
     }
+
+    if (status == ReservationStatus.CANCELLED) {
+        throw new IllegalStateException("Cannot complete a cancelled reservation");
+    }
+
+    status = ReservationStatus.COMPLETED;
+    room.free();
+}
 
     public int getReservationId() {
         return reservationId;
@@ -71,13 +78,18 @@ public Reservation(int reservationId, Guest guest, Room room,
     public ReservationStatus getStatus() {
         return status;
     }
-
-    public void setCheckInDate(LocalDate checkInDate) {
-        this.checkInDate = checkInDate;
+public void setCheckInDate(LocalDate checkInDate) {
+    if (checkInDate == null || !checkInDate.isBefore(this.checkOutDate)) {
+        throw new InvalidDataException("Invalid check-in date");
     }
-    public void setCheckOutDate(LocalDate checkOutDate) {
-        this.checkOutDate = checkOutDate;
+    this.checkInDate = checkInDate;
+}
+public void setCheckOutDate(LocalDate checkOutDate) {
+    if (checkOutDate == null || !this.checkInDate.isBefore(checkOutDate)) {
+        throw new InvalidDataException("Invalid check-out date");
     }
+    this.checkOutDate = checkOutDate;
+}
     public void validateRoomExists() {
     if (room == null) {
         throw new ROOMNOTAVAILABLEEXCEPTION("Room does not exist for this reservation.");
