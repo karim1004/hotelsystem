@@ -15,7 +15,7 @@ public class Room {
     private List<Amenity> amenities ;
     private RoomAvailability availability;
 
-    public Room(int roomNumber, RoomType roomType, List<Amenity> amenities)  
+    public Room(int roomNumber, RoomType roomType, List<Amenity> amenities) {
        if (roomNumber <= 0)
             throw new InvalidDataException("Room number must be positive.");
        if (roomType == null)
@@ -45,7 +45,7 @@ public class Room {
     public int getRoomNumber() {
         return roomNumber;
     }
-    public void setRoomNumber(int roomNumber) throws InvalidDataException {
+    public void setRoomNumber(int roomNumber) {
         if (roomNumber <= 0) {
             throw new InvalidDataException("Room number must be positive.");
         }
