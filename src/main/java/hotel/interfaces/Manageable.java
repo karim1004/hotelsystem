@@ -10,7 +10,7 @@ public interface Manageable <T>{
 
     void add(T item);
 
-    void update(T item);
+    void update(T oldItem, T newItem);
 
     void delete(T item);
 
