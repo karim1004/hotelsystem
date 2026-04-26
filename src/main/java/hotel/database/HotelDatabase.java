@@ -10,14 +10,17 @@ import hotel.people.Guest;
 import hotel.people.Staff;
 import hotel.people.Admin;
 import hotel.people.Receptionist;
-import hotel.people.Role;
-import hotel.people.Gender;
-import hotel.reservations.ReservationStatus;
+import hotel.model.Gender;
+import hotel.model.Role;
+import hotel.model.AmenityType;  
+import hotel.model.ReservationStatus;
 import hotel.reservations.Reservation;
 import hotel.reservations.Invoice;
+import hotel.exceptions.InvalidDataException;
 import java.util.ArrayList;
 import java.time.LocalDate;
 import java.util.Arrays;
+
 
 public class HotelDatabase {
 
@@ -32,11 +35,10 @@ public class HotelDatabase {
     static{
 
         // Amenities
-        Amenity wifi = new Amenity("WiFi");
-        Amenity tv = new Amenity("TV");
-        Amenity minibar = new Amenity("Mini Bar");
-        Amenity ac = new Amenity("Air Conditioner");
-
+        Amenity wifi= new Amenity(AmenityType.WIFI,"High-speed Wifi");
+        Amenity tv= new Amenity(AmenityType.TV,"Flat screen TV");
+        Amenity minibar = new Amenity(AmenityType.MINIBAR,"Mini bar");
+        Amenity ac= new Amenity(AmenityType.AIR_CONDITIONING, "Air Conditioner");
         amenities.addAll(Arrays.asList(wifi, tv, minibar, ac));
 
         // Room Types
@@ -47,9 +49,9 @@ public class HotelDatabase {
         roomTypes.addAll(Arrays.asList(single, doubleRoom, suite));
 
         //  Rooms
-        rooms.add(new Room(101, single, new ArrayList<>(Arrays.asList(wifi, tv)), true));
-        rooms.add(new Room(102, doubleRoom, new ArrayList<>(Arrays.asList(wifi, tv, ac)), true));
-        rooms.add(new Room(201, suite, new ArrayList<>(Arrays.asList(wifi, tv, minibar, ac)), true));
+        rooms.add(new Room(101,single,new ArrayList<>(Arrays.asList(wifi, tv))));
+        rooms.add(new Room(102,doubleRoom,new ArrayList<>(Arrays.asList(wifi, tv, ac))));
+        rooms.add(new Room(201,suite,new ArrayList<>(Arrays.asList(wifi, tv, minibar, ac))));
 
         Guest guest1 = new Guest(
                 "Reem", "Password123", LocalDate.of(2005, 11, 5),
@@ -62,11 +64,9 @@ public class HotelDatabase {
 
         guests.addAll(Arrays.asList(guest1, guest2));
 
- staffMembers.add(new Admin("admin_main", "Admin123", LocalDate.of(1985, 12, 1), Role.ADMIN, 40));
-        staffMembers.add(new Receptionist("sara_recep", "SaraPass", LocalDate.of(1995, 6, 15), Role.RECEPTIONIST, 35));
-
-   reservations.add(new Reservation(guest1, rooms.get(0), LocalDate.now(), LocalDate.now().plusDays(2), ReservationStatus.CONFIRMED));
-    
+        staffMembers.add(new Admin("admin_main", "Admin12345", LocalDate.of(1985, 12, 1), "HQ", Gender.MALE, 40));
+        staffMembers.add(new Receptionist("jana_recep", "janaPass1", LocalDate.of(1995, 6, 15), "HQ", Gender.FEMALE, 35));
+        reservations.add(new Reservation(1, guest1, rooms.get(0), LocalDate.now(), LocalDate.now().plusDays(2)));
     }
 
 
@@ -134,7 +134,7 @@ public static void addRoom(Room room) {
     }
 
     return true;
-}
+  }
 }
 
   
