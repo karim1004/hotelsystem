@@ -11,13 +11,15 @@ public abstract class Person {
     protected String username;
     protected String password;
     protected LocalDate dateOfBirth;
+     protected String address;
 
 
-    public Person (String username, String password, LocalDate dateOfBirth){
-        this.username=username;
-        this.password=password;
-        this.dateOfBirth=dateOfBirth;
-
+   
+   public Person(String username, String password, LocalDate dateOfBirth, String address){
+       setUsername(username);
+        setPassword(password);
+        setDateOfBirth(dateOfBirth);
+        setAddress(address);
     }
 
     public abstract void login (String username, String password);
@@ -32,6 +34,10 @@ public abstract class Person {
 
     public LocalDate getDateOfBirth() {
         return dateOfBirth;
+    }
+    
+    public String getAddress() {
+        return address;
     }
 
     public void setUsername(String username) {
@@ -51,6 +57,11 @@ public abstract class Person {
         if (dob == null || dob.isAfter(LocalDate.now()))
             throw new InvalidDataException("Invalid date of birth");
         this.dateOfBirth = dob;
+    }
+      public void setAddress(String address) {
+        if (address == null || address.trim().isEmpty())
+            throw new InvalidDataException("Address cannot be empty.");
+        this.address = address;
     }
     public boolean checkPassword(String password) {
         return this.password.equals(password);
