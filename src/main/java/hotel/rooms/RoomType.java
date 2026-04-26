@@ -3,13 +3,18 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package hotel.rooms;
+import hotel.exceptions.InvalidDataException;
 
 
 public class RoomType {
     private String roomType;
     private double price;
 
-    public RoomType(String roomType,double price) throws InvalidDataException{
+    public RoomType(String roomType,double price) { 
+        if (roomType == null || roomType.trim().isEmpty())
+            throw new InvalidDataException("Room type name cannot be empty.");
+        if (price < 0)
+            throw new InvalidDataException("Room price cannot be negative."); 
         this.roomType = roomType;
         this.price=price;
     }
@@ -17,7 +22,7 @@ public class RoomType {
     public String getroomType() {
         return roomType;
     }
-    public void setroomType(String type) throws InvalidDataException {
+    public void setroomType(String type) {
         if (roomType == null || roomType.trim().isEmpty()) {
             throw new InvalidDataException("Room type name cannot be empty."); 
         }
@@ -26,7 +31,7 @@ public class RoomType {
     public double getprice(){
         return price;
             }
-    public  void setprice(double price) throws InvalidDataException {
+    public  void setprice(double price)  {
         if (price < 0) {
             throw new InvalidDataException("Room price cannot be negative."); // 
         }
