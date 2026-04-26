@@ -4,18 +4,33 @@
  */
 package hotel.people;
 import hotel.model.Gender;
-import java.time.LocalDate;
+import hotel.model.PaymentMethod;
+import hotel.reservations.Reservation;
+import hotel.reservations.Invoice;
+import hotel.rooms.Room;
+import hotel.database.HotelDatabase;
 import hotel.exceptions.InvalidDataException;
 import hotel.exceptions.INVALIDPAYMENTEXCEPTION;
 import hotel.exceptions.ROOMNOTAVAILABLEEXCEPTION;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+
 
 public class Guest extends Person {
-    private double balance;
+  private double balance;
     private String roomPreferences;
     private Gender gender;
+   
 
     public Guest(String username, String password, LocalDate dob, double balance, String address, Gender gender, String roomPreferences) {
         super(username, password, dob);
+        super(username, password, dob, address);
+         if (balance < 0)
+            throw new InvalidDataException("Balance cannot be negative.");
+         if (gender == null)
+            throw new InvalidDataException("Gender is required.");
+         this.gender = gender;
         this.balance = balance;
         this.roomPreferences = roomPreferences;
     }
@@ -28,103 +43,121 @@ public class Guest extends Person {
         }
     }
 
-    public void register() {
-        System.out.println("Guest registered.");
+ public static Guest register(String username, String password, LocalDate dob,
+                                 double balance, String address, Gender gender, String roomPreferences) {
+        for (Guest g : HotelDatabase.getGuests()) {
+            if (g.getUsername().equals(username))
+                throw new InvalidDataException("Username already exists.");
+        }
+     Guest newGuest = new Guest(username, password, dob, balance, address, gender, roomPreferences);
+        HotelDatabase.addGuest(newGuest);
+        System.out.println("Guest registered successfully: " + username);
+        return newGuest;
     }
-    public void viewRooms() {
-        System.out.println("Viewing available rooms...");
-    }
-      public Reservation makeReservation(Room room, LocalDate in, LocalDate out)
-            throws ROOMNOTAVAILABLEEXCEPTION {
-        return new Reservation(this, room, in, out);
-    }
-
-    public void cancelReservation(Reservation r) {
-        r.cancel();
-    }
-
-    public void checkout(Reservation r, PaymentMethod method)
-            throws INVALIDPAYMENTEXCEPTION {
-
-        double days = java.time.temporal.ChronoUnit.DAYS.between(
-                r.getCheckIn(), r.getCheckOut());
-
-        double total = days * r.getRoom().type.price;
-
-        Invoice invoice = new Invoice(total);
-        invoice.processPayment(this, method);
-
-        r.complete();
-    }
-
-     public ArrayList<Room> viewAvailableRooms(LocalDate in, LocalDate out) {
+     public ArrayList<Room> viewAvailableRooms(LocalDate checkIn, LocalDate checkOut) {
         ArrayList<Room> available = new ArrayList<>();
-        for (Room r : HotelDatabase.rooms) {
-            if (r.isAvailable(in, out))
+        for (Room r : HotelDatabase.getRooms()) {
+            if (HotelDatabase.isRoomAvailable(r, checkIn, checkOut))
                 available.add(r);
         }
         return available;
     }
-    
-   private static boolean usernameExists(String username) {
-        for (Guest g : HotelDatabase.guests) {
-            if (g.getUsername().equals(username))
-                return true;
+      public Reservation makeReservation(Room room, LocalDate checkIn, LocalDate checkOut) {
+        if (!HotelDatabase.isRoomAvailable(room, checkIn, checkOut))
+            throw new ROOMNOTAVAILABLEEXCEPTION("Room " + room.getRoomNumber() + " is not available for the selected dates.");
+
+        int id = HotelDatabase.getReservations().size() + 1; // FIX: generate id properly
+        Reservation reservation = new Reservation(id, this, room, checkIn, checkOut);
+        HotelDatabase.addReservation(reservation);
+        room.occupy();
+        System.out.println("Reservation made: " + reservation);
+        return reservation;
+    }
+    public void cancelReservation(Reservation r) {
+        if (!r.getGuest().getUsername().equals(this.username))
+            throw new InvalidDataException("You can only cancel your own reservations.");
+        r.cancel();
+        System.out.println("Reservation #" + r.getReservationId() + " cancelled.");
+    }
+     public void viewReservations() { // FIX: was missing entirely
+        System.out.println("Reservations for " + username + ":");
+        boolean found = false;
+        for (Reservation r : HotelDatabase.getReservations()) {
+            if (r.getGuest().getUsername().equals(this.username)) {
+                System.out.println("  " + r);
+                found = true;
+            }
         }
-        return false;
-    }  
+        if (!found) System.out.println("  No reservations found.");
+    }
+    public Invoice checkout(Reservation r, PaymentMethod method) {
+        if (!r.getGuest().getUsername().equals(this.username))
+            throw new InvalidDataException("You can only check out your own reservations.");
 
-   
-     public void setAddress(String address) {
-        if (address == null || address.isEmpty())
-            throw new InvalidDataException("Invalid address");
-        this.address = address;
-    }
-   
-    public void setBalance(double balance) {
-        if (balance < 0)
-            throw new InvalidDataException("Negative balance");
-        this.balance = balance;
-    }
-    public void setGender(Gender gender) {
-        if (gender == null)
-            throw new InvalidDataException("Gender required");
-        this.gender = gender;
-    }
+        long days = ChronoUnit.DAYS.between(r.getCheckInDate(), r.getCheckOutDate()); // FIX: correct getter names
+        double total = days * r.getRoom().getRoomType().getPrice(); // FIX: use getter chain, not field access
 
-   
-    public void setRoomPreferences(String pref) {
-        if (pref == null)
-            pref = "";
-        this.roomPreferences = pref;
-    }
-    
-     public static Guest register(Guest guest) {
-        if (usernameExists(guest.getUsername()))
-            throw new InvalidDataException("Username already exists");
+        if (total > balance)
+            throw new INVALIDPAYMENTEXCEPTION("Insufficient balance. Required: $" + total + ", Available: $" + balance);
 
-        HotelDatabase.guests.add(guest);
-        return guest;
+        int invoiceId = HotelDatabase.getInvoices().size() + 1;
+        Invoice invoice = new Invoice(invoiceId, r, total, method);
+        invoice.processPayment();
+        deductBalance(total);
+        r.complete();
+        HotelDatabase.getInvoices().add(invoice);
+        return invoice;
     }
-    
-     public void deductBalance(double amount) {
+    public void deductBalance(double amount) {
         if (amount > balance)
-            throw InvalidDataException("Insufficient balance");
+            throw new INVALIDPAYMENTEXCEPTION("Insufficient balance."); // FIX: was missing 'new'
         balance -= amount;
     }
-    
-     public String getRoomPreferences() {
-        return roomPreferences;
+
+    public void topUpBalance(double amount) {
+        if (amount <= 0)
+            throw new InvalidDataException("Top-up amount must be positive.");
+        balance += amount;
     }
-public double getBalance() {
-    return balance;
-}
-    public String getAddress() {
-        return address; 
+    
+    public double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(double balance) {
+        if (balance < 0)
+            throw new InvalidDataException("Balance cannot be negative.");
+        this.balance = balance;
     }
     public Gender getGender() {
         return gender;
     }
+
+    public void setGender(Gender gender) {
+        if (gender == null)
+            throw new InvalidDataException("Gender is required.");
+        this.gender = gender;
+    }
+    public String getRoomPreferences() {
+        return roomPreferences;
+    }
+
+    public void setRoomPreferences(String roomPreferences) {
+        this.roomPreferences = (roomPreferences != null) ? roomPreferences : "";
+    }
+    public String toString() {
+        return "Guest{username='" + username + "', gender=" + gender +
+               ", balance=" + balance + ", address='" + address + "'}";
+    }
+}
+
+   
+
+    
+
+   
+    
     
    
-}
+
+      
