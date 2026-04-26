@@ -15,14 +15,19 @@ public class Room {
     private List<Amenity> amenities ;
     private RoomAvailability availability;
 
-    public Room(int roomNumber, RoomType roomType, List<Amenity> amenities) throws InvalidDataException {
+    public Room(int roomNumber, RoomType roomType, List<Amenity> amenities)  
+       if (roomNumber <= 0)
+            throw new InvalidDataException("Room number must be positive.");
+       if (roomType == null)
+            throw new InvalidDataException("Room type cannot be null.");
+        this.roomNumber = roomNumber; InvalidDataException {
         this.roomNumber = roomNumber;
         this.roomType = roomType;
-        this.amenities = amenities;
-        this.availability = RoomAvailability.AVAILABLE; // default
+        this.amenities =  (amenities != null) ? amenities : new ArrayList<>();
+        this.availability = RoomAvailability.AVAILABLE; 
     }
 
-    // Methods to change availability
+   
     public void occupy() {
         this.availability = RoomAvailability.OCCUPIED;
     }
@@ -32,6 +37,10 @@ public class Room {
     public void maintenance() {
         this.availability = RoomAvailability.UNDER_MAINTENANCE;
     }
+
+    public boolean isAvailable() {
+        return this.availability == RoomAvailability.AVAILABLE;
+    }    
 
     public int getRoomNumber() {
         return roomNumber;
@@ -47,6 +56,8 @@ public class Room {
         return roomType;
     }
     public void setRoomType(RoomType roomType) {
+         if (roomType == null)
+            throw new InvalidDataException("Room type cannot be null.");
         this.roomType = roomType;
     }
 
@@ -54,7 +65,8 @@ public class Room {
         return amenities;
     }
     public void setAmenities(List<Amenity> amenities) {
-        this.amenities = amenities;
+          this.amenities = (amenities != null) ? amenities : new ArrayList<>();
+       
     }
 
     public RoomAvailability getAvailability() {
