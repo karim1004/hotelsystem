@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package hotel.reservations;
  
 import hotel.people.Guest;
@@ -18,49 +14,96 @@ public class Reservation {
     private LocalDate checkInDate;
     private LocalDate checkOutDate;
     private ReservationStatus status;
-public Reservation(int reservationId, Guest guest, Room room,
-                   LocalDate checkInDate, LocalDate checkOutDate) {
-
-    if (guest == null || room == null || checkInDate == null || checkOutDate == null) {
-        throw new InvalidDataException("Invalid data");
+ 
+    public Reservation(int reservationId, Guest guest, Room room,
+                       LocalDate checkInDate, LocalDate checkOutDate) {
+        if (guest == null)
+            throw new InvalidDataException("Guest cannot be null.");
+        if (room == null)
+            throw new ROOMNOTAVAILABLEEXCEPTION("Room cannot be null.");
+        if (checkInDate == null || checkOutDate == null)
+            throw new InvalidDataException("Check-in and check-out dates cannot be null.");
+        if (!checkInDate.isBefore(checkOutDate))
+            throw new InvalidDataException("Check-in date must be before check-out date.");
+ 
+        this.reservationId = reservationId;
+        this.guest = guest;
+        this.room = room;
+        this.checkInDate = checkInDate;
+        this.checkOutDate = checkOutDate;
+        this.status = ReservationStatus.CONFIRMED; 
     }
-
-    if (!checkInDate.isBefore(checkOutDate)) {
-        throw new InvalidDataException("Check-in must be before check-out");
+ 
+    public void cancel() {
+        if (status == ReservationStatus.CANCELLED)
+            return;
+        if (status == ReservationStatus.COMPLETED)
+            throw new IllegalStateException("Cannot cancel a completed reservation.");
+        status = ReservationStatus.CANCELLED;
+        room.free();
     }
-
-    this.reservationId = reservationId;
-    this.guest = guest;
-    this.room = room;
-    this.checkInDate = checkInDate;
-    this.checkOutDate = checkOutDate;
-    this.status = ReservationStatus.CONFIRMED;
-}
-  public void cancel() {
-    if (status == ReservationStatus.CANCELLED) {
-        return;
+ 
+    public void complete() {
+        if (status == ReservationStatus.COMPLETED)
+            return;
+        if (status == ReservationStatus.CANCELLED)
+            throw new IllegalStateException("Cannot complete a cancelled reservation.");
+        status = ReservationStatus.COMPLETED;
+        room.free();
     }
-
-    if (status == ReservationStatus.COMPLETED) {
-        throw new IllegalStateException("Cannot cancel a completed reservation");
+ 
+    
+    public int getReservationId() {
+        return reservationId;
     }
-
-    status = ReservationStatus.CANCELLED;
-    room.free();
-}
-
-  public void complete() {
-    if (status == ReservationStatus.COMPLETED) {
-        return;
+ 
+    public Guest getGuest() {
+        return guest;
     }
-
-    if (status == ReservationStatus.CANCELLED) {
-        throw new IllegalStateException("Cannot complete a cancelled reservation");
+ 
+    public Room getRoom() {
+        return room;
     }
-
-    status = ReservationStatus.COMPLETED;
-    room.free();
-}
+ 
+    public LocalDate getCheckInDate() {
+        return checkInDate;
+    }
+ 
+    public LocalDate getCheckOutDate() {
+        return checkOutDate;
+    }
+ 
+    public ReservationStatus getStatus() {
+        return status;
+    }
+ 
+    
+    public void setCheckInDate(LocalDate checkInDate) {
+        if (checkInDate == null || !checkInDate.isBefore(this.checkOutDate))
+            throw new InvalidDataException("Invalid check-in date.");
+        this.checkInDate = checkInDate;
+    }
+ 
+    public void setCheckOutDate(LocalDate checkOutDate) {
+        if (checkOutDate == null || !this.checkInDate.isBefore(checkOutDate))
+            throw new InvalidDataException("Invalid check-out date.");
+        this.checkOutDate = checkOutDate;
+    }
+ 
+    public void validateRoomExists() {
+        if (room == null)
+            throw new ROOMNOTAVAILABLEEXCEPTION("Room does not exist for this reservation.");
+    }
+ 
+    
+    public String toString() {
+        return "Reservation #" + reservationId +
+               " | Guest: " + guest.getUsername() +
+               " | Room: " + room.getRoomNumber() +
+               " | " + checkInDate + " -> " + checkOutDate +
+               " | Status: " + status;
+    }
+}}
 
     public int getReservationId() {
         return reservationId;
