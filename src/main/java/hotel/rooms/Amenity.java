@@ -12,6 +12,11 @@ public class Amenity {
     private String description;
 
     public Amenity(AmenityType type, String description) throws InvalidDataException{
+         if (type == null)
+            throw new InvalidDataException("Amenity type cannot be null.");
+        if (description == null || description.trim().isEmpty())
+            throw new InvalidDataException("Amenity description cannot be empty.");
+
         this.type = type;
         this.description = description;
     }
