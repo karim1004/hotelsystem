@@ -52,7 +52,7 @@ public class Reservation {
         room.free();
     }
  
-    
+    // Getters
     public int getReservationId() {
         return reservationId;
     }
@@ -77,7 +77,7 @@ public class Reservation {
         return status;
     }
  
-    
+
     public void setCheckInDate(LocalDate checkInDate) {
         if (checkInDate == null || !checkInDate.isBefore(this.checkOutDate))
             throw new InvalidDataException("Invalid check-in date.");
@@ -95,7 +95,6 @@ public class Reservation {
             throw new ROOMNOTAVAILABLEEXCEPTION("Room does not exist for this reservation.");
     }
  
-    
     public String toString() {
         return "Reservation #" + reservationId +
                " | Guest: " + guest.getUsername() +
@@ -103,43 +102,4 @@ public class Reservation {
                " | " + checkInDate + " -> " + checkOutDate +
                " | Status: " + status;
     }
-}}
-
-    public int getReservationId() {
-        return reservationId;
-    }
-    public Guest getGuest() {
-        return guest;
-    }
-    public Room getRoom() {
-        return room;
-    }
-    public LocalDate getCheckInDate() {
-        return checkInDate;
-    }
-    public LocalDate getCheckOutDate() {
-        return checkOutDate;
-    }
-    public ReservationStatus getStatus() {
-        return status;
-    }
-public void setCheckInDate(LocalDate checkInDate) {
-    if (checkInDate == null || !checkInDate.isBefore(this.checkOutDate)) {
-        throw new InvalidDataException("Invalid check-in date");
-    }
-    this.checkInDate = checkInDate;
 }
-public void setCheckOutDate(LocalDate checkOutDate) {
-    if (checkOutDate == null || !this.checkInDate.isBefore(checkOutDate)) {
-        throw new InvalidDataException("Invalid check-out date");
-    }
-    this.checkOutDate = checkOutDate;
-}
-    public void validateRoomExists() {
-    if (room == null) {
-        throw new ROOMNOTAVAILABLEEXCEPTION("Room does not exist for this reservation.");
-    }
-}
-}
-
-
