@@ -3,12 +3,14 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package hotel.reservations;
-
+ 
 import hotel.people.Guest;
 import hotel.rooms.Room;
 import hotel.model.ReservationStatus;
+import hotel.exceptions.InvalidDataException;
+import hotel.exceptions.ROOMNOTAVAILABLEEXCEPTION;
 import java.time.LocalDate;
-
+ 
 public class Reservation {
     private int reservationId;
     private Guest guest;
