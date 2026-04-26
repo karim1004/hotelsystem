@@ -4,7 +4,7 @@
  */
 package hotel.exceptions;
 
-public class ROOMNOTAVAILABLEEXCEPTION extends Exception {
+public class ROOMNOTAVAILABLEEXCEPTION extends RuntimeException {
     public ROOMNOTAVAILABLEEXCEPTION(String message) {
         super(message);
     }
