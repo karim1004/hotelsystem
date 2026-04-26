@@ -4,9 +4,8 @@
  */
 package hotel.exceptions;
 
-public class INVALIDPAYMENTEXCEPTION extends Exception {
+public class INVALIDPAYMENTEXCEPTION extends RuntimeException {
     public INVALIDPAYMENTEXCEPTION(String message) {
-
         super(message);
     }
 }
