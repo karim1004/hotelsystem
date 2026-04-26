@@ -1,11 +1,10 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package hotel.reservations;
 
 import hotel.model.PaymentMethod;
 import hotel.interfaces.Payable;
+import hotel.exceptions.InvalidDataException;
+import hotel.exceptions.INVALIDPAYMENTEXCEPTION;
+import java.time.LocalDate;
 
 public class Invoice implements Payable {
     private int invoiceId;
@@ -13,76 +12,92 @@ public class Invoice implements Payable {
     private double amount;
     private PaymentMethod paymentMethod;
     private boolean paid;
+    private LocalDate paymentDate; 
 
+    public Invoice(int invoiceId, Reservation reservation, double amount, PaymentMethod paymentMethod) {
+        if (reservation == null)
+            throw new InvalidDataException("Reservation cannot be null.");
+        if (paymentMethod == null)
+            throw new InvalidDataException("Payment method cannot be null.");
+        if (amount <= 0)
+            throw new INVALIDPAYMENTEXCEPTION("Amount must be greater than zero.");
 
-   public Invoice(int invoiceId, Reservation reservation, double amount, PaymentMethod paymentMethod) {
-
-    if (reservation == null || paymentMethod == null) {
-        throw new InvalidDataException("Reservation or payment method is invalid");
+        this.invoiceId = invoiceId;
+        this.reservation = reservation;
+        this.amount = amount;
+        this.paymentMethod = paymentMethod;
+        this.paid = false;
+        this.paymentDate = null;
     }
 
-    if (amount <= 0) {
-        throw new INVALIDPAYMENTEXCEPTION("Amount must be greater than zero");
-    }
-
-    this.invoiceId = invoiceId;
-    this.reservation = reservation;
-    this.amount = amount;
-    this.paymentMethod = paymentMethod;
-    this.paid = false;
-}
-
+ 
     public void processPayment() {
         if (!paid) {
             paid = true;
-            System.out.println("Invoice " + invoiceId + " paid using " + paymentMethod);
-        }
-        else {
-            System.out.println("Invoice " + invoiceId + " is already paid.");
+            paymentDate = LocalDate.now();
+            System.out.println("Invoice #" + invoiceId + " paid $" + amount +
+                               " using " + paymentMethod + " on " + paymentDate);
+        } else {
+            System.out.println("Invoice #" + invoiceId + " is already paid.");
         }
     }
 
-    // Getters
+
     public int getInvoiceId() {
         return invoiceId;
     }
- public int getReservationId() {
-    return reservation.getReservationId();
-}
-    
+
+    public int getReservationId() {
+        return reservation.getReservationId();
+    }
+
+    public Reservation getReservation() {
+        return reservation;
+    }
+
     public double getAmount() {
         return amount;
     }
+
     public PaymentMethod getPaymentMethod() {
         return paymentMethod;
     }
+
     public boolean isPaid() {
         return paid;
     }
 
-public void setAmount(double amount) {
-    if (amount <= 0) {
-        throw new INVALIDPAYMENTEXCEPTION("Amount must be greater than zero");
+    public LocalDate getPaymentDate() {
+        return paymentDate;
     }
-    this.amount = amount;
-}
- public void setPaymentMethod(PaymentMethod paymentMethod) {
-    if (paymentMethod == null) {
-        throw new InvalidDataException("Payment method cannot be null");
-    }
-    this.paymentMethod = paymentMethod;
-}
-    public void resetPayment() {
-    paid = false;
-}
-    
-    public String getPaymentStatus() {
-    if (paid) {
-        return "PAID";
-    } else {
-        return "UNPAID";
-    }
-}
-    
-}
 
+    public String getPaymentStatus() {
+        return paid ? "PAID" : "UNPAID";
+    }
+
+    public void setAmount(double amount) {
+        if (amount <= 0)
+            throw new INVALIDPAYMENTEXCEPTION("Amount must be greater than zero.");
+        this.amount = amount;
+    }
+
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
+        if (paymentMethod == null)
+            throw new InvalidDataException("Payment method cannot be null.");
+        this.paymentMethod = paymentMethod;
+    }
+
+    public void resetPayment() {
+        paid = false;
+        paymentDate = null;
+    }
+
+
+    public String toString() {
+        return "Invoice #" + invoiceId +
+               " | Amount: $" + amount +
+               " | Method: " + paymentMethod +
+               " | Status: " + getPaymentStatus() +
+               (paymentDate != null ? " | Paid on: " + paymentDate : "");
+    }
+}
